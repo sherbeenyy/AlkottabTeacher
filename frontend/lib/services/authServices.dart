@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:frontend/services/teacher/teacher.dart';
 
-class Authservices {
+class AuthServices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -45,6 +45,24 @@ class Authservices {
       return AuthResponse(
           success: false, message: 'An unknown error occurred.');
     }
+  }
+
+  Future<AuthResponse> loginTeacher(
+      {required String email, required String password}) async {
+    if (email.isEmpty || password.isEmpty) {
+      return AuthResponse(
+          success: false, message: "Email and password are required");
+    }
+    try {
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      return AuthResponse(success: true, message: "Login Successful!");
+    } catch (e) {
+      return AuthResponse(success: false, message: "Failed to login!");
+    }
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
   }
 }
 

@@ -26,7 +26,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     String password = passwordController.text;
 
     AuthResponse response =
-        await Authservices().registerTeacher(email: email, password: password);
+        await AuthServices().registerTeacher(email: email, password: password);
     if (response.success) {
       setState(() {
         isLoading = true;
