@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "458515164016",
+    "project_id": "elkottab-78053",
+    "storage_bucket": "elkottab-78053.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:458515164016:android:fce3ba0ab5ccc712d3fdb5",
+        "android_client_info": {
+          "package_name": "com.elkottab.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "458515164016-j5nq12hghi5mlr6j2h48re8n6gvvdm93.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKN66ke4Beqy_gL7aOlrfpTnZdv32zfkA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "458515164016-j5nq12hghi5mlr6j2h48re8n6gvvdm93.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "458515164016-88noih7s86on3h82fl3s0n9phlr13dc8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.rtcProj"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:458515164016:android:8b1d25a27a6c59f7d3fdb5",
+        "android_client_info": {
+          "package_name": "com.example.rtc_proj"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "458515164016-j5nq12hghi5mlr6j2h48re8n6gvvdm93.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKN66ke4Beqy_gL7aOlrfpTnZdv32zfkA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "458515164016-j5nq12hghi5mlr6j2h48re8n6gvvdm93.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "458515164016-88noih7s86on3h82fl3s0n9phlr13dc8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.rtcProj"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
