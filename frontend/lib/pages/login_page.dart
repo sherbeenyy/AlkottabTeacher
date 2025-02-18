@@ -1,10 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/pages/home_page.dart';
+import 'package:frontend/services/authServices.dart';
+import 'package:frontend/widgets/snack_bar.dart';
 import 'registration_page.dart';
 
-class LoginPage extends StatelessWidget {
-
-
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  bool isLoading = false;
+
+  void handleLogin() async {
+    AuthResponse response = await AuthServices().loginTeacher(
+        email: emailController.text, password: passwordController.text);
+
+    if (response.success) {
+      setState(() {
+        isLoading = true;
+      });
+      showSnackBar(context, response.message, response.success);
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => HomePage()));
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      showSnackBar(context, response.message, response.success);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +48,8 @@ class LoginPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center, // Keep the overall layout centered
+          crossAxisAlignment:
+              CrossAxisAlignment.center, // Keep the overall layout centered
           children: [
             Text(
               'تسجيل دخول',
@@ -33,7 +64,9 @@ class LoginPage extends StatelessWidget {
             Directionality(
               textDirection: TextDirection.rtl,
               child: TextField(
-                textAlign: TextAlign.right, // Align text in the text field to the right
+                controller: emailController,
+                textAlign: TextAlign
+                    .right, // Align text in the text field to the right
                 decoration: InputDecoration(
                   labelText: 'الحساب الإلكتروني',
                   border: OutlineInputBorder(
@@ -47,7 +80,9 @@ class LoginPage extends StatelessWidget {
             Directionality(
               textDirection: TextDirection.rtl,
               child: TextField(
-                textAlign: TextAlign.right, // Align text in the text field to the right
+                controller: passwordController,
+                textAlign: TextAlign
+                    .right, // Align text in the text field to the right
                 obscureText: true,
                 decoration: InputDecoration(
                   labelText: 'كلمة السر',
@@ -60,7 +95,7 @@ class LoginPage extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                // Forget password logic make it in an external function w call it bs 
+                // Forget password logic make it in an external function w call it bs
               },
               child: Text(
                 'نسيت كلمة السر؟',
@@ -76,7 +111,7 @@ class LoginPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>  RegistrationPage() ,
+                    builder: (context) => RegistrationPage(),
                   ),
                 );
               },
@@ -92,7 +127,7 @@ class LoginPage extends StatelessWidget {
             SizedBox(height: 30),
             ElevatedButton(
               onPressed: () {
-                // Login logic hayba hena han3mlo fe function tanya w n callha
+                handleLogin();
               },
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
