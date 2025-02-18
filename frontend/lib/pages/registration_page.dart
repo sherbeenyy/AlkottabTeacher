@@ -1,3 +1,6 @@
+import 'package:frontend/services/authServices.dart';
+import 'package:frontend/widgets/snack_bar.dart';
+
 import "register_details.dart";
 import 'package:flutter/material.dart';
 
@@ -12,8 +15,32 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final TextEditingController confirmEmailController = TextEditingController();
+
+  bool isLoading = false;
+
+  void handleRegister() async {
+    String email = emailController.text;
+    String password = passwordController.text;
+
+    AuthResponse response =
+        await Authservices().registerTeacher(email: email, password: password);
+    if (response.success) {
+      setState(() {
+        isLoading = true;
+      });
+      showSnackBar(context, response.message, response.success);
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => RegisterDetails()));
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      showSnackBar(context, response.message, response.success);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +120,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       if (value.length < 8) {
                         return 'كلمة السر يجب أن تكون أكثر من 8 أحرف';
                       }
-                      if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)').hasMatch(value)) {
+                      if (!RegExp(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)')
+                          .hasMatch(value)) {
                         return 'كلمة السر يجب أن تحتوي على حرف صغير وحرف كبير ورقم';
                       }
                       return null;
@@ -129,23 +157,17 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 8.0, top: 8.0, bottom: 8.0),
+                    padding: const EdgeInsets.only(
+                        right: 8.0, top: 8.0, bottom: 8.0),
                     child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState?.validate() == true) {
-                          // Save the values of the fields to store and validate then navigate to the next page
-                         // final email = emailController.text;
-                         // final password = passwordController.text;
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>  RegisterDetails()
-                            ),
-                          );
+                          handleRegister();
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
