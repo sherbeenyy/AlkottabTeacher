@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/services/authServices.dart';
 import 'login_page.dart';
+import 'edit_profile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,7 +34,7 @@ class _HomePageState extends State<HomePage> {
         title: Text('الصفحة الرئيسية'),
         backgroundColor: Colors.white,
         centerTitle: true,
-        automaticallyImplyLeading: false, // This removes the back arrow
+        automaticallyImplyLeading: false, 
       ),
       endDrawer: Drawer(
         backgroundColor: Colors.white,
@@ -52,11 +53,16 @@ class _HomePageState extends State<HomePage> {
                     CircleAvatar(
                       radius: 40,
                       backgroundImage: AssetImage(
-                          './assets/img/teacher.png'), // Replace with actual profile picture
+                          './assets/img/teacher.png'), 
                     ),
                     TextButton(
                       onPressed: () {
-                        // Navigate to edit account page
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    EditProfile()));
                       },
                       child: Text(
                         'تعديل الحساب',
