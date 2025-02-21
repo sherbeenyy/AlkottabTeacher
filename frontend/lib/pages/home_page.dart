@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/services/authServices.dart';
+import 'package:frontend/services/teacher/teacher.dart';
 import 'login_page.dart';
 import 'edit_profile.dart';
+import '../services/teacher/teacherServices.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,7 +14,25 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  Teacher? _currentTeacher;
 
+
+    @override
+  void initState() {
+    super.initState();
+    _fetchCurrentTeacher();
+  }
+
+  Future<void> _fetchCurrentTeacher() async {
+    Teacherservices teacherServices = Teacherservices();
+    Teacher? teacher = await teacherServices.getCurrentTeacher();
+    if (teacher != null) {
+          setState(() {
+      _currentTeacher = teacher;
+    });
+    }
+
+  }
   static const List<Widget> _widgetOptions = <Widget>[
     Text('Home Page'),
     Text('Teachers Page'),
@@ -31,7 +51,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('الصفحة الرئيسية'),
+                title: Text(_currentTeacher != null
+            ? "مرحبا ${_currentTeacher!.firstName}"
+            : "not found"),
         backgroundColor: Colors.white,
         centerTitle: true,
         automaticallyImplyLeading: false, 

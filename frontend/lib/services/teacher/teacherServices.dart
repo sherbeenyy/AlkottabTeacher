@@ -8,7 +8,7 @@ import 'teacher.dart';
 
 class Teacherservices {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+//  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final TeacherApi _teacherApi = TeacherApi();
 
   Future<TeacherSnackBar> editTeacher(Teacher teacher) async {
