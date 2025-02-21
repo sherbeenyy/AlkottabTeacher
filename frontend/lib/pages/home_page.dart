@@ -35,9 +35,8 @@ class _HomePageState extends State<HomePage> {
   }
   static const List<Widget> _widgetOptions = <Widget>[
     Text('Home Page'),
-    Text('Teachers Page'),
-    Text('Reservations Page'),
-    Text('Sessions Page'),
+    Text('reservations Page'),
+    Text('my timetable Page'),
     Text('Chat Page'),
   ];
 
@@ -156,16 +155,12 @@ class _HomePageState extends State<HomePage> {
             label: 'الرئيسية',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'المعلمون',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.book),
             label: 'الحجوزات',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.schedule),
-            label: 'الجلسات',
+            icon: Icon(Icons.calendar_month),
+            label: 'جدولي',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
