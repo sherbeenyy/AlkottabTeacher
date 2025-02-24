@@ -54,9 +54,12 @@ class AuthServices {
           success: false, message: "Email and password are required");
     }
     try {
-      DocumentSnapshot teacherDoc =
-          await _firestore.collection("teachers").doc(email).get();
-      if (!teacherDoc.exists) {
+      final QuerySnapshot teacherDoc = await _firestore
+          .collection("teachers")
+          .where('email', isEqualTo: email)
+          .get();
+
+      if (teacherDoc.docs.isEmpty) {
         return AuthResponse(
             success: false, message: "No account found for this email.");
       }

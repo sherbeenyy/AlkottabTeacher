@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:frontend/services/teacher/teacherApi.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
