@@ -1,10 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/services/teacher/teacher.dart';
+import 'package:frontend/services/teacher/teacherServices.dart';
+import 'package:frontend/widgets/snack_bar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'home_page.dart';
-
-// Enums
 
 class RegisterDetails extends StatefulWidget {
   const RegisterDetails({super.key});
@@ -26,28 +27,17 @@ class _RegisterDetailsState extends State<RegisterDetails> {
   final yearController = TextEditingController();
   final bioController = TextEditingController();
 
+  // Default selections
   AgeRange selectedAge = AgeRange.age13_17;
   Nationality selectedCountry = Nationality.A;
+  Level selectedStudentLevel = Level.beginner;
+  Gender selectedGender = Gender.male;
+  List<Qiraah> selectedQera2at = [];
 
-  // Gender selection
-  Gender selectedGender = Gender.male; // Default gender
-
-  // For profile picture
+  // For profile picture and files
   File? _profileImage;
-
-  // For PDF files
   File? _bachelorDegreeFile;
   File? _ejazaFile;
-
-  // For preferred student level (now using checkboxes)
-  final List<Level> _studentLevelOptions = Level.values;
-  final List<bool> _selectedStudentLevels =
-      List.generate(Level.values.length, (index) => false);
-
-  // For preferred qera2at
-  final List<Qiraah> _qera2atOptions = Qiraah.values;
-  final List<bool> _selectedQera2at =
-      List.generate(Qiraah.values.length, (index) => false);
 
   // Function to pick an image from the gallery
   Future<void> _pickImage() async {
@@ -74,6 +64,51 @@ class _RegisterDetailsState extends State<RegisterDetails> {
           _ejazaFile = File(pickedFile.path);
         }
       });
+    }
+  }
+
+  final Teacherservices teacherservices = Teacherservices();
+  bool isLoading = false;
+  // Handle teacher edit logic
+  void handleTeacherEdit() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      showSnackBar(context, 'لم يتم العثور على مستخدم مسجل', false);
+      return;
+    }
+
+    // Create a Teacher object
+    Teacher teacher = Teacher(
+      email: user.email ?? '',
+      uid: user.uid,
+      firstName: firstNameController.text,
+      lastName: lastNameController.text,
+      birthYear: yearController.text,
+      birthMonth: monthController.text,
+      birthDay: dayController.text,
+      phoneNumber: phoneController.text,
+      description: bioController.text,
+      nationality: selectedCountry,
+      gender: selectedGender,
+      preferredStudentAgeRange: selectedAge,
+      preferredStudentLevel: selectedStudentLevel,
+      qiraah: selectedQera2at.isNotEmpty ? selectedQera2at : [],
+    );
+
+    // Print or upload the teacher object
+    TeacherSnackBar response = await teacherservices.editTeacher(teacher);
+    if (response.success) {
+      setState(() {
+        isLoading = true;
+      });
+      showSnackBar(context, response.message, response.success);
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => HomePage()));
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      showSnackBar(context, response.message, response.success);
     }
   }
 
@@ -412,7 +447,7 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                 ),
                 const SizedBox(height: 16),
 
-                // Preferred Student Level (now using checkboxes)
+                // Preferred Student Level
                 Directionality(
                   textDirection: TextDirection.rtl,
                   child: Column(
@@ -424,18 +459,22 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
-                      Wrap(
-                        children: List.generate(
-                          _studentLevelOptions.length,
-                          (index) => CheckboxListTile(
-                            value: _selectedStudentLevels[index],
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedStudentLevels[index] = value!;
-                              });
-                            },
-                            title: Text(Teacher
-                                .levelToArabic[_studentLevelOptions[index]]!),
+                      DropdownButtonFormField<Level>(
+                        value: selectedStudentLevel,
+                        items: Level.values.map((Level level) {
+                          return DropdownMenuItem<Level>(
+                            value: level,
+                            child: Text(Teacher.levelToArabic[level]!),
+                          );
+                        }).toList(),
+                        onChanged: (Level? value) {
+                          setState(() {
+                            selectedStudentLevel = value!;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
@@ -457,19 +496,21 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                       ),
                       const SizedBox(height: 8),
                       Wrap(
-                        children: List.generate(
-                          _qera2atOptions.length,
-                          (index) => CheckboxListTile(
-                            value: _selectedQera2at[index],
-                            onChanged: (value) {
+                        children: Qiraah.values.map((Qiraah qiraah) {
+                          return CheckboxListTile(
+                            value: selectedQera2at.contains(qiraah),
+                            onChanged: (bool? value) {
                               setState(() {
-                                _selectedQera2at[index] = value!;
+                                if (value == true) {
+                                  selectedQera2at.add(qiraah);
+                                } else {
+                                  selectedQera2at.remove(qiraah);
+                                }
                               });
                             },
-                            title: Text(Teacher
-                                .qiraahToArabic[_qera2atOptions[index]]!),
-                          ),
-                        ),
+                            title: Text(Teacher.qiraahToArabic[qiraah]!),
+                          );
+                        }).toList(),
                       ),
                     ],
                   ),
@@ -504,39 +545,7 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        // Handle form submission
-                        print('تم تسجيل النموذج بنجاح');
-                        print('الاسم الأول: ${firstNameController.text}');
-                        print('الاسم الأخير: ${lastNameController.text}');
-                        print(
-                            'العمر: ${selectedAge.toString().split('.').last}');
-                        print(
-                            'البلد: ${selectedCountry.toString().split('.').last}');
-                        print('رقم الهاتف: ${phoneController.text}');
-                        print(
-                            'الجنس: ${selectedGender.toString().split('.').last}');
-                        if (_profileImage != null) {
-                          print('تم اختيار صورة: ${_profileImage!.path}');
-                        }
-                        if (_bachelorDegreeFile != null) {
-                          print(
-                              'تم اختيار ملف البكالوريوس: ${_bachelorDegreeFile!.path}');
-                        }
-                        if (_ejazaFile != null) {
-                          print('تم اختيار ملف الإجازة: ${_ejazaFile!.path}');
-                        }
-                        print(
-                            'المستوى المفضل للطلاب: ${_studentLevelOptions.where((element) => _selectedStudentLevels[_studentLevelOptions.indexOf(element)]).toList()}');
-                        print(
-                            'القراءات المفضلة: ${_qera2atOptions.where((element) => _selectedQera2at[_qera2atOptions.indexOf(element)]).toList()}');
-                        print('السيرة الذاتية: ${bioController.text}');
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const HomePage(),
-                          ),
-                        );
+                        handleTeacherEdit();
                       }
                     },
                     style: ElevatedButton.styleFrom(

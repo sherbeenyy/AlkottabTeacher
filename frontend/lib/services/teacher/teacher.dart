@@ -12,23 +12,24 @@ class Teacher {
   Gender? gender;
   AgeRange? preferredStudentAgeRange;
   Level? preferredStudentLevel;
-  Qiraah? qiraah;
+  List<Qiraah> qiraah; // Changed to a list of Qiraah
 
-  Teacher(
-      {required this.email,
-      required this.uid,
-      this.firstName,
-      this.lastName,
-      this.birthYear,
-      this.birthMonth,
-      this.birthDay,
-      this.phoneNumber,
-      this.description,
-      this.nationality,
-      this.gender,
-      this.preferredStudentAgeRange,
-      this.preferredStudentLevel,
-      this.qiraah});
+  Teacher({
+    required this.email,
+    required this.uid,
+    this.firstName,
+    this.lastName,
+    this.birthYear,
+    this.birthMonth,
+    this.birthDay,
+    this.phoneNumber,
+    this.description,
+    this.nationality,
+    this.gender,
+    this.preferredStudentAgeRange,
+    this.preferredStudentLevel,
+    this.qiraah = const [], // Default to an empty list
+  });
 
   Map<String, dynamic> toFirebaseMap() {
     return {
@@ -44,7 +45,9 @@ class Teacher {
       'gender': gender?.index,
       'preferredStudentAgeRange': preferredStudentAgeRange?.index,
       'preferredStudentLevel': preferredStudentLevel?.index,
-      'qiraah': qiraah?.index,
+      'qiraah': qiraah
+          .map((q) => q.index)
+          .toList(), // Convert list of Qiraah to list of indices
     };
   }
 
@@ -65,7 +68,8 @@ class Teacher {
       preferredStudentAgeRange:
           _getAgeRangeFromIndex(map['preferredStudentAgeRange']),
       preferredStudentLevel: _getLevelFromIndex(map['preferredStudentLevel']),
-      qiraah: _getQiraahFromIndex(map['qiraah']),
+      qiraah: _getQiraahListFromIndices(
+          map['qiraah']), // Convert list of indices to list of Qiraah
     );
   }
 
@@ -89,9 +93,9 @@ class Teacher {
     return Level.values[index];
   }
 
-  static Qiraah? _getQiraahFromIndex(int? index) {
-    if (index == null) return null;
-    return Qiraah.values[index];
+  static List<Qiraah> _getQiraahListFromIndices(List<dynamic>? indices) {
+    if (indices == null) return [];
+    return indices.map((index) => Qiraah.values[index]).toList();
   }
 
   // Maps for translating enum values to Arabic and English
