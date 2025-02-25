@@ -12,6 +12,7 @@ class Teacher {
   Gender? gender;
   AgeRange? preferredStudentAgeRange;
   Level? preferredStudentLevel;
+  Qiraah? qiraah;
 
   Teacher(
       {required this.email,
@@ -26,7 +27,8 @@ class Teacher {
       this.nationality,
       this.gender,
       this.preferredStudentAgeRange,
-      this.preferredStudentLevel});
+      this.preferredStudentLevel,
+      this.qiraah});
 
   Map<String, dynamic> toFirebaseMap() {
     return {
@@ -41,7 +43,8 @@ class Teacher {
       'nationality': nationality?.index,
       'gender': gender?.index,
       'preferredStudentAgeRange': preferredStudentAgeRange?.index,
-      'preferredStudentLevel': preferredStudentLevel?.index
+      'preferredStudentLevel': preferredStudentLevel?.index,
+      'qiraah': qiraah?.index,
     };
   }
 
@@ -62,6 +65,7 @@ class Teacher {
       preferredStudentAgeRange:
           _getAgeRangeFromIndex(map['preferredStudentAgeRange']),
       preferredStudentLevel: _getLevelFromIndex(map['preferredStudentLevel']),
+      qiraah: _getQiraahFromIndex(map['qiraah']),
     );
   }
 
@@ -83,6 +87,11 @@ class Teacher {
   static Level? _getLevelFromIndex(int? index) {
     if (index == null) return null;
     return Level.values[index];
+  }
+
+  static Qiraah? _getQiraahFromIndex(int? index) {
+    if (index == null) return null;
+    return Qiraah.values[index];
   }
 
   // Maps for translating enum values to Arabic and English
@@ -141,6 +150,20 @@ class Teacher {
     Level.intermediate: 'Intermediate',
     Level.advanced: 'Advanced',
   };
+
+  static const Map<Qiraah, String> qiraahToArabic = {
+    Qiraah.qiraah1: 'قراءة 1',
+    Qiraah.qiraah2: 'قراءة 2',
+    Qiraah.qiraah3: 'قراءة 3',
+    Qiraah.qiraah4: 'قراءة 4',
+  };
+
+  static const Map<Qiraah, String> qiraahToEnglish = {
+    Qiraah.qiraah1: 'Qiraah 1',
+    Qiraah.qiraah2: 'Qiraah 2',
+    Qiraah.qiraah3: 'Qiraah 3',
+    Qiraah.qiraah4: 'Qiraah 4',
+  };
 }
 
 // Enums
@@ -159,3 +182,5 @@ enum AgeRange {
 enum Nationality { A, B, C, D }
 
 enum Gender { male, female }
+
+enum Qiraah { qiraah1, qiraah2, qiraah3, qiraah4 }

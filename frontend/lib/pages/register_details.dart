@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/services/teacher/teacher.dart';
 import 'package:image_picker/image_picker.dart';
-import 'home_page.dart';
 import 'dart:io';
+import 'home_page.dart';
+
+// Enums
 
 class RegisterDetails extends StatefulWidget {
   const RegisterDetails({super.key});
@@ -11,12 +14,6 @@ class RegisterDetails extends StatefulWidget {
 }
 
 class _RegisterDetailsState extends State<RegisterDetails> {
-  // List of countries (sorted in ascending order)
-  final List<String> countries = ['مصر', 'السعودية', 'الإمارات', 'الكويت', 'قطر', 'البحرين', 'عمان'];
-
-  // List of age options (starting from 23)
-  final List<String> ages = List.generate(78, (index) => (index + 23).toString());
-
   // Form key for validation
   final _formKey = GlobalKey<FormState>();
 
@@ -29,11 +26,11 @@ class _RegisterDetailsState extends State<RegisterDetails> {
   final yearController = TextEditingController();
   final bioController = TextEditingController();
 
-  String selectedAge = '';
-  String selectedCountry = '';
+  AgeRange selectedAge = AgeRange.age13_17;
+  Nationality selectedCountry = Nationality.A;
 
   // Gender selection
-  String selectedGender = 'male'; // Default gender
+  Gender selectedGender = Gender.male; // Default gender
 
   // For profile picture
   File? _profileImage;
@@ -43,12 +40,14 @@ class _RegisterDetailsState extends State<RegisterDetails> {
   File? _ejazaFile;
 
   // For preferred student level (now using checkboxes)
-  final List<String> _studentLevelOptions = ['مبتدئ', 'متوسط', 'خبير'];
-  final List<bool> _selectedStudentLevels = [false, false, false];
+  final List<Level> _studentLevelOptions = Level.values;
+  final List<bool> _selectedStudentLevels =
+      List.generate(Level.values.length, (index) => false);
 
   // For preferred qera2at
-  final List<String> _qera2atOptions = List.generate(20, (index) => 'قراءة ${index + 1}');
-  final List<bool> _selectedQera2at = List.generate(20, (index) => false);
+  final List<Qiraah> _qera2atOptions = Qiraah.values;
+  final List<bool> _selectedQera2at =
+      List.generate(Qiraah.values.length, (index) => false);
 
   // Function to pick an image from the gallery
   Future<void> _pickImage() async {
@@ -79,13 +78,6 @@ class _RegisterDetailsState extends State<RegisterDetails> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    selectedAge = ages[0]; // Initialize in initState
-    selectedCountry = countries[0]; // Initialize in initState
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -109,16 +101,20 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                       child: CircleAvatar(
                         radius: 75,
                         backgroundColor: Colors.grey[300],
-                        backgroundImage: _profileImage != null ? FileImage(_profileImage!) : null,
+                        backgroundImage: _profileImage != null
+                            ? FileImage(_profileImage!)
+                            : null,
                         child: _profileImage == null
-                            ? const Icon(Icons.camera_alt, size: 50, color: Colors.black54)
+                            ? const Icon(Icons.camera_alt,
+                                size: 50, color: Colors.black54)
                             : null,
                       ),
                     ),
                     const SizedBox(height: 8),
                     const Text(
                       'صورة الملف الشخصي',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -247,7 +243,9 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                               return 'الرجاء إدخال السنة';
                             }
                             final year = int.tryParse(value);
-                            if (year == null || year < 1900 || year > DateTime.now().year) {
+                            if (year == null ||
+                                year < 1900 ||
+                                year > DateTime.now().year) {
                               return 'سنة غير صالحة';
                             }
                             return null;
@@ -267,30 +265,35 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                     children: [
                       const Text(
                         'الجنس',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       Row(
                         children: [
-                          Radio(
-                            value: 'male',
+                          Radio<Gender>(
+                            value: Gender.male,
                             groupValue: selectedGender,
-                            onChanged: (value) {
+                            onChanged: (Gender? value) {
                               setState(() {
                                 selectedGender = value!;
                               });
                             },
                           ),
-                          const Text('ذكر', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                          Radio(
-                            value: 'female',
+                          const Text('ذكر',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          Radio<Gender>(
+                            value: Gender.female,
                             groupValue: selectedGender,
-                            onChanged: (value) {
+                            onChanged: (Gender? value) {
                               setState(() {
                                 selectedGender = value!;
                               });
                             },
                           ),
-                          const Text('أنثى', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          const Text('أنثى',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ],
@@ -301,15 +304,15 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                 // Country Dropdown
                 Directionality(
                   textDirection: TextDirection.rtl,
-                  child: DropdownButtonFormField<String>(
+                  child: DropdownButtonFormField<Nationality>(
                     value: selectedCountry,
-                    items: countries.map((country) {
-                      return DropdownMenuItem(
+                    items: Nationality.values.map((Nationality country) {
+                      return DropdownMenuItem<Nationality>(
                         value: country,
-                        child: Text(country),
+                        child: Text(Teacher.nationalityToArabic[country]!),
                       );
                     }).toList(),
-                    onChanged: (value) {
+                    onChanged: (Nationality? value) {
                       setState(() {
                         selectedCountry = value!;
                       });
@@ -357,7 +360,8 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                     children: [
                       const Text(
                         'رفع شهادة البكالوريوس (صورة)',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
                       Center(
@@ -386,7 +390,8 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                     children: [
                       const Text(
                         'رفع الإجازة (صورة)',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
                       Center(
@@ -415,7 +420,8 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                     children: [
                       const Text(
                         'المستوى المفضل للطلاب',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
                       Wrap(
@@ -428,7 +434,8 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                                 _selectedStudentLevels[index] = value!;
                               });
                             },
-                            title: Text(_studentLevelOptions[index]),
+                            title: Text(Teacher
+                                .levelToArabic[_studentLevelOptions[index]]!),
                           ),
                         ),
                       ),
@@ -445,7 +452,8 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                     children: [
                       const Text(
                         'القراءات المفضلة',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
                       Wrap(
@@ -458,7 +466,8 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                                 _selectedQera2at[index] = value!;
                               });
                             },
-                            title: Text(_qera2atOptions[index]),
+                            title: Text(Teacher
+                                .qiraahToArabic[_qera2atOptions[index]]!),
                           ),
                         ),
                       ),
@@ -499,31 +508,35 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                         print('تم تسجيل النموذج بنجاح');
                         print('الاسم الأول: ${firstNameController.text}');
                         print('الاسم الأخير: ${lastNameController.text}');
-                        print('العمر: $selectedAge');
-                        print('البلد: $selectedCountry');
+                        print(
+                            'العمر: ${selectedAge.toString().split('.').last}');
+                        print(
+                            'البلد: ${selectedCountry.toString().split('.').last}');
                         print('رقم الهاتف: ${phoneController.text}');
-                        print('الجنس: $selectedGender');
+                        print(
+                            'الجنس: ${selectedGender.toString().split('.').last}');
                         if (_profileImage != null) {
                           print('تم اختيار صورة: ${_profileImage!.path}');
                         }
                         if (_bachelorDegreeFile != null) {
-                          print('تم اختيار ملف البكالوريوس: ${_bachelorDegreeFile!.path}');
+                          print(
+                              'تم اختيار ملف البكالوريوس: ${_bachelorDegreeFile!.path}');
                         }
                         if (_ejazaFile != null) {
                           print('تم اختيار ملف الإجازة: ${_ejazaFile!.path}');
                         }
-                        print('المستوى المفضل للطلاب: ${_studentLevelOptions.where((element) => _selectedStudentLevels[_studentLevelOptions.indexOf(element)]).toList()}');
-                        print('القراءات المفضلة: ${_qera2atOptions.where((element) => _selectedQera2at[_qera2atOptions.indexOf(element)]).toList()}');
+                        print(
+                            'المستوى المفضل للطلاب: ${_studentLevelOptions.where((element) => _selectedStudentLevels[_studentLevelOptions.indexOf(element)]).toList()}');
+                        print(
+                            'القراءات المفضلة: ${_qera2atOptions.where((element) => _selectedQera2at[_qera2atOptions.indexOf(element)]).toList()}');
                         print('السيرة الذاتية: ${bioController.text}');
 
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const HomePage(),
-                            ),
-                          );
-                    
-                      
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HomePage(),
+                          ),
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -535,7 +548,10 @@ class _RegisterDetailsState extends State<RegisterDetails> {
                     ),
                     child: const Text(
                       'تسجيل',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
                     ),
                   ),
                 ),

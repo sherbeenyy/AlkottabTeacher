@@ -15,10 +15,10 @@ class Teacherservices {
       // Get the current user
       User? user = _auth.currentUser;
 
-      if (user != null && user.uid == teacher.uid) {
+      if (user != null) {
         // Convert the Teacher object to a map
-        http.Response response = await _teacherApi.editTeacher(
-            teacher.toFirebaseMap(), teacher.uid); // Pass the uid explicitly
+        http.Response response = await _teacherApi
+            .editTeacher(teacher.toFirebaseMap()); // Pass the uid explicitly
 
         TeacherResponse teacherResponse = TeacherResponse.fromJson(
             jsonDecode(response.body), response.statusCode);
