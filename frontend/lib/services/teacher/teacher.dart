@@ -12,21 +12,24 @@ class Teacher {
   Gender? gender;
   AgeRange? preferredStudentAgeRange;
   Level? preferredStudentLevel;
+  List<Qiraah> qiraah; // Changed to a list of Qiraah
 
-  Teacher(
-      {required this.email,
-      required this.uid,
-      this.firstName,
-      this.lastName,
-      this.birthYear,
-      this.birthMonth,
-      this.birthDay,
-      this.phoneNumber,
-      this.description,
-      this.nationality,
-      this.gender,
-      this.preferredStudentAgeRange,
-      this.preferredStudentLevel});
+  Teacher({
+    required this.email,
+    required this.uid,
+    this.firstName,
+    this.lastName,
+    this.birthYear,
+    this.birthMonth,
+    this.birthDay,
+    this.phoneNumber,
+    this.description,
+    this.nationality,
+    this.gender,
+    this.preferredStudentAgeRange,
+    this.preferredStudentLevel,
+    this.qiraah = const [], // Default to an empty list
+  });
 
   Map<String, dynamic> toFirebaseMap() {
     return {
@@ -41,7 +44,10 @@ class Teacher {
       'nationality': nationality?.index,
       'gender': gender?.index,
       'preferredStudentAgeRange': preferredStudentAgeRange?.index,
-      'preferredStudentLevel': preferredStudentLevel?.index
+      'preferredStudentLevel': preferredStudentLevel?.index,
+      'qiraah': qiraah
+          .map((q) => q.index)
+          .toList(), // Convert list of Qiraah to list of indices
     };
   }
 
@@ -62,6 +68,8 @@ class Teacher {
       preferredStudentAgeRange:
           _getAgeRangeFromIndex(map['preferredStudentAgeRange']),
       preferredStudentLevel: _getLevelFromIndex(map['preferredStudentLevel']),
+      qiraah: _getQiraahListFromIndices(
+          map['qiraah']), // Convert list of indices to list of Qiraah
     );
   }
 
@@ -83,6 +91,11 @@ class Teacher {
   static Level? _getLevelFromIndex(int? index) {
     if (index == null) return null;
     return Level.values[index];
+  }
+
+  static List<Qiraah> _getQiraahListFromIndices(List<dynamic>? indices) {
+    if (indices == null) return [];
+    return indices.map((index) => Qiraah.values[index]).toList();
   }
 
   // Maps for translating enum values to Arabic and English
@@ -141,6 +154,20 @@ class Teacher {
     Level.intermediate: 'Intermediate',
     Level.advanced: 'Advanced',
   };
+
+  static const Map<Qiraah, String> qiraahToArabic = {
+    Qiraah.qiraah1: 'قراءة 1',
+    Qiraah.qiraah2: 'قراءة 2',
+    Qiraah.qiraah3: 'قراءة 3',
+    Qiraah.qiraah4: 'قراءة 4',
+  };
+
+  static const Map<Qiraah, String> qiraahToEnglish = {
+    Qiraah.qiraah1: 'Qiraah 1',
+    Qiraah.qiraah2: 'Qiraah 2',
+    Qiraah.qiraah3: 'Qiraah 3',
+    Qiraah.qiraah4: 'Qiraah 4',
+  };
 }
 
 // Enums
@@ -159,3 +186,5 @@ enum AgeRange {
 enum Nationality { A, B, C, D }
 
 enum Gender { male, female }
+
+enum Qiraah { qiraah1, qiraah2, qiraah3, qiraah4 }
