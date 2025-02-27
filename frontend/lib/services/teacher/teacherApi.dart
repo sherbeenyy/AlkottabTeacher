@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:frontend/services/teacher/teacherApiSchema.dart';
 import 'package:http/http.dart' as http;
 
 class TeacherApi {
@@ -12,7 +13,7 @@ class TeacherApi {
     return null;
   }
 
-  Future<http.Response> editTeacher(Map<String, dynamic> teacherMap) async {
+  Future<http.Response> editTeacher(EditTeacherRequest request) async {
     String? token = await getIdToken(); // Await the future
     return http.put(
       Uri.parse('http://10.0.2.2:8080/api/teacher/editTeacher'),
@@ -20,7 +21,7 @@ class TeacherApi {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $token',
       },
-      body: jsonEncode(teacherMap),
+      body: jsonEncode(request.toMap()),
     );
   }
 

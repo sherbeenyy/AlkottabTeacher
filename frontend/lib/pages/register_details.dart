@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/services/teacher/teacher.dart';
+import 'package:frontend/services/teacher/teacherApiSchema.dart';
 import 'package:frontend/services/teacher/teacherServices.dart';
 import 'package:frontend/widgets/snack_bar.dart';
 import 'package:image_picker/image_picker.dart';
@@ -92,7 +93,7 @@ class _RegisterDetailsState extends State<RegisterDetails> {
         preferredStudentAgeRange: selectedAge,
         qiraah: selectedQera2at);
     // Print or upload the teacher object
-    TeacherSnackBar response = await teacherservices.editTeacher(teacher);
+    TeacherSnackBar response = await teacherservices.editTeacher(request);
     if (response.success) {
       setState(() {
         isLoading = true;
