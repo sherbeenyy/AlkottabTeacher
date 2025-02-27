@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/services/teacher/teacher.dart';
+import 'package:frontend/services/teacher/teacherApiSchema.dart';
 import 'package:frontend/services/teacher/teacherServices.dart';
 import 'package:frontend/widgets/snack_bar.dart';
 import 'package:image_picker/image_picker.dart';
@@ -78,25 +79,20 @@ class _RegisterDetailsState extends State<RegisterDetails> {
     }
 
     // Create a Teacher object
-    Teacher teacher = Teacher(
-      email: user.email ?? '',
-      uid: user.uid,
-      firstName: firstNameController.text,
-      lastName: lastNameController.text,
-      birthYear: yearController.text,
-      birthMonth: monthController.text,
-      birthDay: dayController.text,
-      phoneNumber: phoneController.text,
-      description: bioController.text,
-      nationality: selectedCountry,
-      gender: selectedGender,
-      preferredStudentAgeRange: selectedAge,
-      preferredStudentLevel: selectedStudentLevel,
-      qiraah: selectedQera2at.isNotEmpty ? selectedQera2at : [],
-    );
-
+    EditTeacherRequest request = EditTeacherRequest(
+        firstName: firstNameController.text,
+        lastName: lastNameController.text,
+        birthYear: int.parse(yearController.text),
+        birthMonth: int.parse(monthController.text),
+        birthDay: int.parse(dayController.text),
+        phoneNumber: phoneController.text,
+        description: bioController.text,
+        nationality: selectedCountry,
+        gender: selectedGender,
+        preferredStudentLevel: selectedStudentLevel,
+        qiraah: selectedQera2at);
     // Print or upload the teacher object
-    TeacherSnackBar response = await teacherservices.editTeacher(teacher);
+    TeacherSnackBar response = await teacherservices.editTeacher(request);
     if (response.success) {
       setState(() {
         isLoading = true;
