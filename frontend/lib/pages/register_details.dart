@@ -78,23 +78,19 @@ class _RegisterDetailsState extends State<RegisterDetails> {
     }
 
     // Create a Teacher object
-    Teacher teacher = Teacher(
-      email: user.email ?? '',
-      uid: user.uid,
-      firstName: firstNameController.text,
-      lastName: lastNameController.text,
-      birthYear: yearController.text,
-      birthMonth: monthController.text,
-      birthDay: dayController.text,
-      phoneNumber: phoneController.text,
-      description: bioController.text,
-      nationality: selectedCountry,
-      gender: selectedGender,
-      preferredStudentAgeRange: selectedAge,
-      preferredStudentLevel: selectedStudentLevel,
-      qiraah: selectedQera2at.isNotEmpty ? selectedQera2at : [],
-    );
-
+    EditTeacherRequest request = EditTeacherRequest(
+        firstName: firstNameController.text,
+        lastName: lastNameController.text,
+        birthYear: int.parse(yearController.text),
+        birthMonth: int.parse(monthController.text),
+        birthDay: int.parse(dayController.text),
+        phoneNumber: phoneController.text,
+        description: bioController.text,
+        nationality: selectedCountry,
+        gender: selectedGender,
+        preferredStudentLevel: selectedStudentLevel,
+        preferredStudentAgeRange: selectedAge,
+        qiraah: selectedQera2at);
     // Print or upload the teacher object
     TeacherSnackBar response = await teacherservices.editTeacher(teacher);
     if (response.success) {
