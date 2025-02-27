@@ -68,7 +68,7 @@ class _RegisterDetailsState extends State<RegisterDetails> {
     }
   }
 
-  final TeacherServices teacherservices = TeacherServices();
+  final Teacherservices teacherservices = Teacherservices();
   bool isLoading = false;
   // Handle teacher edit logic
   void handleTeacherEdit() async {

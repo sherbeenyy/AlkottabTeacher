@@ -1,19 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:frontend/pages/home_page.dart';
-import 'package:frontend/pages/login_page.dart';
-import 'package:frontend/services/teacher/teacherServices.dart';
+import 'pages/home_page.dart';
+import 'pages/login_page.dart';
+import "package:firebase_core/firebase_core.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -21,57 +19,20 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: Colors.grey[100],
       ),
-      home: const AuthGate(),
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.hasData) {
+            return HomePage();
+          }
+          return LoginPage();
+        },
+      ),
     );
-  }
-}
-
-class AuthGate extends StatefulWidget {
-  const AuthGate({super.key});
-
-  @override
-  State<AuthGate> createState() => _AuthGateState();
-}
-
-class _AuthGateState extends State<AuthGate> {
-  final TeacherServices _teacherServices = TeacherServices();
-  bool _isLoading = true;
-  bool _isValidUser = false;
-
-  @override
-  void initState() {
-    super.initState();
-    FirebaseAuth.instance.authStateChanges().listen((user) async {
-      if (user != null) {
-        final teacher = await _teacherServices.getCurrentTeacher();
-        if (teacher != null) {
-          setState(() {
-            _isValidUser = true;
-            _isLoading = false;
-          });
-        } else {
-          await FirebaseAuth.instance.signOut();
-          setState(() {
-            _isValidUser = false;
-            _isLoading = false;
-          });
-        }
-      } else {
-        setState(() {
-          _isValidUser = false;
-          _isLoading = false;
-        });
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-    return _isValidUser ? const HomePage() : const LoginPage();
   }
 }
