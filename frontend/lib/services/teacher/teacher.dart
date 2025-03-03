@@ -1,6 +1,7 @@
 class Teacher {
   final String email;
   final String uid;
+
   String? firstName;
   String? lastName;
   String? birthYear;
@@ -13,6 +14,7 @@ class Teacher {
   AgeRange? preferredStudentAgeRange;
   Level? preferredStudentLevel;
   List<Qiraah> qiraah; // Changed to a list of Qiraah
+  final int rating; // Added rating attribute
 
   Teacher({
     required this.email,
@@ -29,6 +31,7 @@ class Teacher {
     this.preferredStudentAgeRange,
     this.preferredStudentLevel,
     this.qiraah = const [], // Default to an empty list
+    required this.rating, // Rating is required
   });
 
   Map<String, dynamic> toFirebaseMap() {
@@ -48,6 +51,7 @@ class Teacher {
       'qiraah': qiraah
           .map((q) => q.index)
           .toList(), // Convert list of Qiraah to list of indices
+      'rating': rating, // Add rating to map
     };
   }
 
@@ -70,6 +74,7 @@ class Teacher {
       preferredStudentLevel: _getLevelFromIndex(map['preferredStudentLevel']),
       qiraah: _getQiraahListFromIndices(
           map['qiraah']), // Convert list of indices to list of Qiraah
+      rating: map['rating'], // Add rating from map
     );
   }
 

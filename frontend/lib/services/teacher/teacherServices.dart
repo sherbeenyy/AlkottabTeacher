@@ -89,6 +89,7 @@ class TeacherResponse {
   final String? details;
   final Map<String, dynamic>? teacher;
   final List<Map<String, dynamic>>? teacherList;
+  final String? customToken;
 
   TeacherResponse({
     required this.statusCode,
@@ -96,7 +97,9 @@ class TeacherResponse {
     this.details,
     this.teacher,
     this.teacherList,
+    this.customToken,
   });
+
   factory TeacherResponse.fromJson(Map<String, dynamic> json, int statusCode) {
     return TeacherResponse(
       statusCode: statusCode,
@@ -104,6 +107,7 @@ class TeacherResponse {
       details: json['details'],
       teacher: json['teacher'],
       teacherList: json['teacherList'],
+      customToken: json['customToken'],
     );
   }
 }

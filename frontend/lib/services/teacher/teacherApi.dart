@@ -35,4 +35,17 @@ class TeacherApi {
       },
     );
   }
+
+  Future<http.Response> registerTeacher(String email, String password) async {
+    return http.post(
+      Uri.parse('http://10.0.2.2:8080/api/teacher/registerTeacher'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'email': email,
+        'password': password,
+      }),
+    );
+  }
 }
